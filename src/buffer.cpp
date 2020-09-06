@@ -110,7 +110,7 @@ void GapBuffer::resize(uint32_t increase)
     this->gap_end = this->data + _gap_end;
 
     // amount of elements that need to be copied over
-    ptrdiff_t amount = (this->data + this->size * sizeof(char)) - (this->gap_end);
+    ptrdiff_t amount = (this->data + this->size * sizeof(char)) - this->gap_end;
     //std::cout << "amount is: " << amount << "\n";
     // update size of buffer
     this->size += increase;
@@ -135,6 +135,11 @@ void GapBuffer::move(uint32_t position) const
 int main(void)
 {
     GapBuffer buff{20};
+    for (int i = 'a'; i < 'z'; i++) buff.insert((char)i);
+    buff.move(1);
+    for (int i = 'a'; i < 'z'; i++) buff.insert((char)i);
+    for (int i = 'a'; i < 'z'; i++) buff.insert((char)i);
+    buff.move(2);
     for (int i = 'a'; i < 'z'; i++) buff.insert((char)i);
     buff.insert('\0');
     buff.print();

@@ -4,12 +4,13 @@ extern "C" {
 #include "lualib.h"
 }
 
+#include "buffer.hpp"
+
 #include <iostream>
 
 #define VERSION "0.7"
 
-//int main(void) {
-int lua_main(void) {
+int main(void) {
     /* the Lua interpreter */
     lua_State *L;
     /* initialize Lua */
@@ -22,15 +23,15 @@ int lua_main(void) {
     /* cleanup Lua */
     lua_close(L);
 
-    //GapBuffer buff{20};
-    //buff.insert('a');
-    //buff.insert('b');
-    //buff.insert('c');
-    //buff.insert('\0');
-    //printf("%s\n", buff.get_ptr());
-    //buff.left(2);
-    //buff.del();
-    //printf("%s\n", buff.get_ptr());
+    GapBuffer buff{20};
+    for (int i = 'a'; i < 'z'; i++) buff.insert((char)i);
+    buff.move(1);
+    for (int i = 'a'; i < 'z'; i++) buff.insert((char)i);
+    for (int i = 'a'; i < 'z'; i++) buff.insert((char)i);
+    buff.move(2);
+    for (int i = 'a'; i < 'z'; i++) buff.insert((char)i);
+    buff.insert('\0');
+    buff.print();
     
     return 0;
 }

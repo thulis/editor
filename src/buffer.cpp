@@ -1,48 +1,26 @@
 #include <iostream>
 #include <cstring>
 
-// FIXME: Rule of 3/5
-class GapBuffer
+#include "buffer.hpp"
+
+GapBuffer::GapBuffer(uint32_t _size)
+    : size(_size), gap_size(_size)
 {
-private:
-    char* data;
-    uint32_t size;
-    uint32_t gap_size;
-    mutable char* gap_start;
-    mutable char* gap_end;
-public:
-    explicit GapBuffer(uint32_t _size)
-        : size(_size), gap_size(_size)
-    {
-        void* _data = std::malloc(_size * sizeof(char));
-        // TODO: use exceptions
-        if (_data == nullptr) {
-            std::cerr << "Error creating gap buffer!\n";
-            exit(1);
-        }
-        this->data = static_cast<char*>(_data);
-        this->gap_start = this->data;
-        this->gap_end = this->data + _size * sizeof(char);
+    void* _data = std::malloc(_size * sizeof(char));
+    // TODO: use exceptions
+    if (_data == nullptr) {
+        std::cerr << "Error creating gap buffer!\n";
+        exit(1);
     }
+    this->data = static_cast<char*>(_data);
+    this->gap_start = this->data;
+    this->gap_end = this->data + _size * sizeof(char);
+}
 
-    ~GapBuffer()
-    {
-        std::free(this->data);
-    }
-public:
-    void resize(uint32_t);
-    void move(uint32_t) const;
-    void left(uint32_t) const;
-    void right(uint32_t) const;
-    void insert(char) noexcept;
-    void del() noexcept;
-    void print() const noexcept;
-
-    const char* get_ptr() const noexcept;
-
-    inline int32_t gap_start_pos();
-    inline int32_t gap_end_pos();
-};
+GapBuffer::~GapBuffer()
+{
+    std::free(this->data);
+}
 
 const char* GapBuffer::get_ptr() const noexcept
 {
@@ -130,18 +108,4 @@ void GapBuffer::move(uint32_t position) const
     ptrdiff_t diff = (char*)(this->gap_start) - (char*)(this->data);
     uint32_t gap_pos = diff;
     gap_pos < position ? this->right(position-gap_pos) : this->left(gap_pos-position);
-}
-
-int main(void)
-{
-    GapBuffer buff{20};
-    for (int i = 'a'; i < 'z'; i++) buff.insert((char)i);
-    buff.move(1);
-    for (int i = 'a'; i < 'z'; i++) buff.insert((char)i);
-    for (int i = 'a'; i < 'z'; i++) buff.insert((char)i);
-    buff.move(2);
-    for (int i = 'a'; i < 'z'; i++) buff.insert((char)i);
-    buff.insert('\0');
-    buff.print();
-    return 0;
 }

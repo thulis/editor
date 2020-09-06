@@ -32,7 +32,8 @@ const char* GapBuffer::get_ptr() const noexcept
 void GapBuffer::left(uint32_t amount) const
 {
     size_t n = amount * sizeof(char);
-    std::memcpy(this->gap_end - n, this->gap_start - n, amount);
+    //std::memcpy(this->gap_end - n, this->gap_start - n, amount);
+    std::memmove(this->gap_end - n, this->gap_start - n, amount);
     this->gap_end -= n;
     this->gap_start -= n;
 }
@@ -41,7 +42,8 @@ void GapBuffer::left(uint32_t amount) const
 void GapBuffer::right(uint32_t amount) const
 {
     size_t n = amount * sizeof(char);
-    std::memcpy(this->gap_start + n, this->gap_end + n, amount);
+    //std::memcpy(this->gap_start + n, this->gap_end + n, amount);
+    std::memmove(this->gap_start + n, this->gap_end + n, amount);
     this->gap_end += n;
     this->gap_start += n;
 }

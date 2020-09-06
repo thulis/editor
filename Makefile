@@ -1,7 +1,7 @@
 CXX = clang++
 CXXFLAGS = -Wall
 LFLAGS = -llua -ldl
-OUTNAME = luatest
+OUTNAME = editor
 OUTDIR = build
 DEBUG = -g -Werror -fsanitize=address
 

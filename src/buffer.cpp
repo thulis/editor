@@ -14,20 +14,20 @@ public:
     explicit GapBuffer(uint32_t _size)
         : size(_size), gap_size(_size)
     {
-        char* _data = new char[_size];
+        void* _data = std::malloc(_size * sizeof(char));
         // TODO: use exceptions
         if (_data == nullptr) {
             std::cerr << "Error creating gap buffer!\n";
             exit(1);
         }
-        this->data = _data;
-        this->gap_start = _data;
-        this->gap_end = _data + _size * sizeof(char);
+        this->data = static_cast<char*>(_data);
+        this->gap_start = this->data;
+        this->gap_end = this->data + _size * sizeof(char);
     }
 
     ~GapBuffer()
     {
-        delete[] this->data;
+        std::free(this->data);
     }
 public:
     void resize(uint32_t);
@@ -73,6 +73,7 @@ void GapBuffer::insert(char character) noexcept
     *(this->gap_start) = character;
     this->gap_start++;
     this->gap_size--;
+    if (this->gap_size <= 2) this->resize(20);
 }
 
 void GapBuffer::del() noexcept
@@ -94,17 +95,33 @@ void GapBuffer::print() const noexcept
 }
 
 // TODO: proper error handling
-//       - update gap size
-//       - expand gap to fit
-void GapBuffer::resize(uint32_t factor)
+void GapBuffer::resize(uint32_t increase)
 {
-    uint
-    void* new_buff = std::realloc(this->data, (size_t)(this->size * factor));
+    ptrdiff_t _gap_start = this->gap_start - this->data;
+    ptrdiff_t _gap_end = this->gap_end - this->data;
+    void* new_buff = std::realloc(this->data, this->size + increase);
     if (new_buff == nullptr) {
         std::cerr << "Error reallocating gap buffer!\n";
         exit(1);
     }
     this->data = static_cast<char*>(new_buff);
+    // update gap start and end position 
+    this->gap_start = this->data + _gap_start;
+    this->gap_end = this->data + _gap_end;
+
+    // amount of elements that need to be copied over
+    ptrdiff_t amount = (this->data + this->size * sizeof(char)) - (this->gap_end);
+    //std::cout << "amount is: " << amount << "\n";
+    // update size of buffer
+    this->size += increase;
+    // where to copy the characters
+    char* dst = (this->data + this->size * sizeof(char)) - amount;
+    // do the copy
+    std::memmove(dst, this->gap_end+1, (int)amount);
+    // update members
+    // update only gap end, since we don't know anything about gap_start, gap size might not even be 0
+    this->gap_end = dst - 1;
+    this->gap_size += increase;
 }
 
 // TODO: error handling
@@ -118,19 +135,8 @@ void GapBuffer::move(uint32_t position) const
 int main(void)
 {
     GapBuffer buff{20};
-    buff.insert('a');
-    buff.insert('b');
-    buff.insert('c');
-    buff.insert('d');
-    buff.insert('e');
-    buff.insert('f');
-    buff.insert('g');
-    buff.insert('h');
-    buff.insert('i');
+    for (int i = 'a'; i < 'z'; i++) buff.insert((char)i);
     buff.insert('\0');
-    buff.print();
-    buff.move(1);
-    buff.del();
     buff.print();
     return 0;
 }

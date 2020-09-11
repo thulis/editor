@@ -2,8 +2,9 @@
 #include <cstring>
 
 #include "buffer.hpp"
+#include "Mode.hpp"
 
-GapBuffer::GapBuffer(uint32_t _size)
+buffer::GapBuffer::GapBuffer(uint32_t _size)
     : size(_size), gap_size(_size)
 {
     void* _data = std::malloc(_size * sizeof(char));
@@ -17,19 +18,19 @@ GapBuffer::GapBuffer(uint32_t _size)
     this->gap_end = this->data + _size * sizeof(char);
 }
 
-GapBuffer::~GapBuffer()
+buffer::GapBuffer::~GapBuffer()
 {
     std::free(this->data);
 }
 
-const char* GapBuffer::get_ptr() const noexcept
+const char* buffer::GapBuffer::get_ptr() const noexcept
 {
     return static_cast<const char*>(this->data);
 }
 
 // TODO: error handling (gap should stay inside bounds, e.g. gap_start should 
 // never be ==size, expect for it's 0 of course)
-void GapBuffer::left(uint32_t amount) const
+void buffer::GapBuffer::left(uint32_t amount) const
 {
     size_t n = amount * sizeof(char);
     //std::memcpy(this->gap_end - n, this->gap_start - n, amount);
@@ -39,7 +40,7 @@ void GapBuffer::left(uint32_t amount) const
 }
 
 // TODO: error handling
-void GapBuffer::right(uint32_t amount) const
+void buffer::GapBuffer::right(uint32_t amount) const
 {
     size_t n = amount * sizeof(char);
     //std::memcpy(this->gap_start + n, this->gap_end + n, amount);
@@ -48,7 +49,7 @@ void GapBuffer::right(uint32_t amount) const
     this->gap_start += n;
 }
 
-void GapBuffer::insert(char character) noexcept
+void buffer::GapBuffer::insert(char character) noexcept
 {
     *(this->gap_start) = character;
     this->gap_start++;
@@ -56,7 +57,7 @@ void GapBuffer::insert(char character) noexcept
     if (this->gap_size <= 2) this->resize(20);
 }
 
-void GapBuffer::del() noexcept
+void buffer::GapBuffer::del() noexcept
 {
     // gap simply swallows the character so it doesn't get rendered anymore
     // there's no point in overriding it...
@@ -64,7 +65,7 @@ void GapBuffer::del() noexcept
     this->gap_size++;
 }
 
-void GapBuffer::print() const noexcept
+void buffer::GapBuffer::print() const noexcept
 {
     // part before gap
     ptrdiff_t end = (char*)(this->gap_start) - (char*)(this->data);
@@ -75,7 +76,7 @@ void GapBuffer::print() const noexcept
 }
 
 // TODO: proper error handling
-void GapBuffer::resize(uint32_t increase)
+void buffer::GapBuffer::resize(uint32_t increase)
 {
     ptrdiff_t _gap_start = this->gap_start - this->data;
     ptrdiff_t _gap_end = this->gap_end - this->data;
@@ -105,7 +106,7 @@ void GapBuffer::resize(uint32_t increase)
 }
 
 // TODO: error handling
-void GapBuffer::move(uint32_t position) const
+void buffer::GapBuffer::move(uint32_t position) const
 {
     ptrdiff_t diff = (char*)(this->gap_start) - (char*)(this->data);
     uint32_t gap_pos = diff;

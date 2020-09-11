@@ -1,5 +1,5 @@
 CXX = clang++
-CXXFLAGS = -Wall
+CXXFLAGS = -Wall --std=c++2a
 LFLAGS = -llua -ldl
 OUTNAME = editor
 OUTDIR = build

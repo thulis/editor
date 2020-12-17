@@ -1,4 +1,4 @@
-#include "Mode.hpp"
+#include "Mode.h"
 #include <iostream>
 
 mode::Normal::Normal()

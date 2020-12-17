@@ -1,8 +1,8 @@
 #include <iostream>
 #include <cstring>
 
-#include "buffer.hpp"
-#include "Mode.hpp"
+#include "Buffer.h"
+#include "Mode.h"
 
 buffer::GapBuffer::GapBuffer(uint32_t _size)
     : size(_size), gap_size(_size)

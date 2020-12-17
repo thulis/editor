@@ -4,8 +4,8 @@ extern "C" {
 #include "lualib.h"
 }
 
-#include "buffer.hpp"
-#include "Mode.hpp"
+#include "Buffer.h"
+#include "Mode.h"
 
 #include <iostream>
 

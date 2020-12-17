@@ -1,15 +1,15 @@
-CXX = clang++
+CXX = g++
 CXXFLAGS = -Wall --std=c++2a
-LFLAGS = -llua -ldl
+LDFLAGS = -Iinclude -llua -ldl
 OUTNAME = editor
 OUTDIR = build
 DEBUG = -g -Werror -fsanitize=address
 
 lua_test: src/*.cpp
-	${CXX} src/*.cpp ${CXXFLAGS} -o ${OUTDIR}/${OUTNAME} ${LFLAGS}
+	${CXX} src/*.cpp ${CXXFLAGS} ${LDFLAGS} -o ${OUTDIR}/${OUTNAME} 
 
 debug: src/*.cpp
-	${CXX} src/*.cpp ${CXXFLAGS} ${DEBUG} -o ${OUTDIR}/${OUTNAME} ${LFLAGS}
+	${CXX} src/*.cpp ${CXXFLAGS} ${DEBUG} ${LDFLAGS} -o ${OUTDIR}/${OUTNAME} 
 
 clean: ${OUTDIR}/${OUTNAME}
 	rm ${OUTDIR}/${OUTNAME}
